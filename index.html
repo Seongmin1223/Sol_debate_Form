@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>솔토론회 지원서</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="club-banner">
+    경북대학교 중앙동아리
+    <span>✦</span>
+    솔토론회
+    <span>✦</span>
+    Soldebate KNU
+  </div>
+
+  <div class="quote-top">❝</div>
+
+  <div class="topic-box">
+    <div class="topic-label">이번 회차 논제</div>
+    <div class="topic-text" id="topicText">우리가 틀렸음을 증명해주세요</div>
+  </div>
+
+  <div class="quote-bottom">❞</div>
+
+  <div class="keyword-wrap">
+    <span class="keyword-tag active"># 논증</span>
+    <span class="keyword-tag"># 비판적사고</span>
+    <span class="keyword-tag"># 토론</span>
+    <span class="keyword-tag"># 경북대</span>
+    <span class="keyword-tag"># 솔토론회</span>
+  </div>
+
+  <div class="topic-context">
+    <div class="topic-image-wrap">
+      <div class="img-placeholder">IMAGE</div>
+    </div>
+    <div class="topic-desc">
+      <div class="topic-desc-label">논제 배경</div>
+      <div class="topic-desc-text">
+        이 논제는 ○○○한 배경에서 출발합니다.
+        최근 사회적으로 ○○○한 논의가 활발히 이루어지고 있으며,
+        다양한 시각에서 비판적으로 검토할 필요가 있습니다.
+        여러분의 논리적인 주장을 기다립니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="welcome-box">
+    <div class="welcome-icon">📌</div>
+    <div class="welcome-content">
+      <div class="welcome-title">이런 분을 <span>환영</span>합니다</div>
+      <ul class="welcome-list">
+        <li>한마디라도 하고 싶은 분</li>
+        <li>논리적으로 의견을 나누고 싶은 분</li>
+        <li>비판적 사고에 관심 있는 분</li>
+        <li>토론 경험이 없어도 괜찮습니다</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">지원서 작성</div>
+
+  <form id="applyForm">
+    <div class="form-section">
+
+      <div class="field">
+        <label>이름</label>
+        <input type="text" name="name" placeholder="본인의 이름을 입력하세요" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label>학번</label>
+        <input type="text" name="studentId" placeholder="학번을 입력하세요" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label>핵심 주장</label>
+        <textarea name="claim" placeholder="논제에 대한 핵심 주장을 입력하세요"></textarea>
+      </div>
+
+      <div class="field">
+        <label>근거</label>
+        <textarea name="evidence" class="tall" placeholder="주장을 뒷받침하는 근거를 입력하세요"></textarea>
+      </div>
+
+    </div>
+
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn" id="submitBtn">제출하기</button>
+    </div>
+  </form>
+
+  <div class="footer">
+    <strong>경북대학교 중앙동아리 솔토론회</strong><br>
+    생각은 말할 때 완성됩니다 &nbsp;·&nbsp; @soldebate_knu
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="duplicateModal">
+  <div class="modal">
+    <div class="modal-header orange">⚠️ 이미 제출하셨습니다</div>
+    <div class="modal-body">
+      해당 학번으로 이미 제출된 내역이 있습니다.<br>
+      동일한 학번으로는 중복 제출이 불가합니다.
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('duplicateModal')">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="errorModal">
+  <div class="modal">
+    <div class="modal-header orange">⚠️ 오류 발생</div>
+    <div class="modal-body" id="errorMsg">제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('errorModal')">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="check">✓</div>
+  <h2>제출 완료!</h2>
+  <p>지원해주셔서 감사합니다.<br>우리가 틀렸음을 증명해주세요!</p>
+</div>
+
+<script>
+
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3ffDnGBoPY7WngEOoftbMfZh4z9OYD40HhWdhuclAPtwG2XHvLNv9JOZxBeUL8CNifA/exec"
+
+  const topicText = document.getElementById('topicText').innerText.trim();
+
+  document.getElementById("applyForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const name      = this.name.value.trim();
+    const studentId = this.studentId.value.trim();
+    const claim     = this.claim.value.trim();
+    const evidence  = this.evidence.value.trim();
+
+    const fields = [
+      { el: this.name,      val: name },
+      { el: this.studentId, val: studentId },
+      { el: this.claim,     val: claim },
+      { el: this.evidence,  val: evidence }
+    ];
+    let hasEmpty = false;
+    fields.forEach(({ el, val }) => {
+      if (!val) {
+        el.classList.add('error');
+        el.style.animation = 'none';
+        requestAnimationFrame(() => { el.style.animation = 'shake 0.35s ease'; });
+        hasEmpty = true;
+      } else {
+        el.classList.remove('error');
+      }
+    });
+    if (hasEmpty) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>제출 중...';
+
+    const payload = { topic: topicText, name, studentId, claim, evidence };
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+
+      if (result.result === "duplicate") {
+        openModal('duplicateModal');
+      } else if (result.result === "success") {
+        document.getElementById('successOverlay').classList.add('show');
+        this.reset();
+      } else {
+        document.getElementById('errorMsg').textContent = "알 수 없는 오류가 발생했습니다.";
+        openModal('errorModal');
+      }
+    } catch (err) {
+      document.getElementById('errorMsg').textContent = "서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      openModal('errorModal');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '제출하기';
+    }
+  });
+
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', () => el.classList.remove('error'));
+  });
+
+  function openModal(id)  { document.getElementById(id).classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('show');
+    });
+  });
+</script>
+</body>
+</html>
