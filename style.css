@@ -157,11 +157,14 @@ body::after {
 .topic-image-wrap {
   position: relative;
   min-height: 200px;
+  max-height: 300px;
   background: #ddd;
   overflow: hidden;
 }
 
 .topic-image-wrap img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -550,10 +553,146 @@ textarea.tall {
     border-top: 2px solid var(--black);
   }
   .topic-image-wrap {
-    min-height: 180px;
+    min-height: 200px;
   }
   .quote-top, .quote-bottom { font-size: 80px; }
   .topic-text { font-size: 18px; }
   .submit-btn { padding: 14px 40px; font-size: 16px; }
   .club-banner { font-size: 10px; letter-spacing: 3px; }
+}
+
+
+.vote-section {
+  border: 2px solid var(--black);
+  background: rgba(255,255,255,0.6);
+  padding: 22px 24px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.6s ease 0.4s both;
+}
+
+.vote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.vote-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--black);
+  text-transform: uppercase;
+}
+
+.vote-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--red);
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+.vote-bar-wrap {
+  display: flex;
+  height: 28px;
+  overflow: hidden;
+  border: 2px solid var(--black);
+  margin-bottom: 10px;
+}
+
+.vote-bar-pro {
+  background: var(--black);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+.vote-bar-con {
+  background: var(--red);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+.vote-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.stat-pro {
+  color: var(--black);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.stat-con {
+  color: var(--red);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.vote-total {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+.vote-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.choice-btn {
+  border: 2.5px solid var(--black);
+  background: transparent;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+  letter-spacing: 1px;
+}
+
+.choice-btn:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.choice-btn[data-value="찬성"].selected {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--red);
+}
+
+.choice-btn[data-value="반대"].selected {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--black);
+}
+
+.vote-choice.error-choice .choice-btn {
+  border-color: var(--red);
+  background: rgba(215,43,43,0.06);
 }

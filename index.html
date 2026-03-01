@@ -22,7 +22,7 @@
 
   <div class="topic-box">
     <div class="topic-label">이번 회차 논제</div>
-    <div class="topic-text" id="topicText">우리가 틀렸음을 증명해주세요</div>
+    <div class="topic-text" id="topicText">학교폭력 가해학생에 대한 대학 입시 불이익을 의무화해야 한다.</div>
   </div>
 
   <div class="quote-bottom">❞</div>
@@ -37,16 +37,33 @@
 
   <div class="topic-context">
     <div class="topic-image-wrap">
-      <div class="img-placeholder">IMAGE</div>
+      <img src="reject.png" alt="논제 관련 이미지">
     </div>
     <div class="topic-desc">
       <div class="topic-desc-label">논제 배경</div>
       <div class="topic-desc-text">
-        이 논제는 ○○○한 배경에서 출발합니다.
-        최근 사회적으로 ○○○한 논의가 활발히 이루어지고 있으며,
-        다양한 시각에서 비판적으로 검토할 필요가 있습니다.
+        이 논제는 학교폭력 문제가 단순한 교내 갈등을 넘어 사회적 책임의 문제로 확장되고 있는 배경에서 출발합니다.
+        피해 학생 보호와 재발 방지라는 측면에서 강력한 제재가 필요하다는 주장과, 청소년에게 과도한 낙인이 될 수 있다는 우려가 동시에 존재합니다.
+        그렇기에 다양한 시각에서 비판적으로 검토할 필요가 있습니다.
         여러분의 논리적인 주장을 기다립니다.
       </div>
+    </div>
+  </div>
+
+
+  <div class="vote-section">
+    <div class="vote-header">
+      <span class="vote-label">현재 투표 현황</span>
+      <span class="vote-live"><span class="live-dot"></span>LIVE</span>
+    </div>
+    <div class="vote-bar-wrap">
+      <div class="vote-bar-pro" id="barPro" style="width:50%"></div>
+      <div class="vote-bar-con" id="barCon" style="width:50%"></div>
+    </div>
+    <div class="vote-stats">
+      <span class="stat-pro"><strong id="pctPro">50</strong>% 찬성</span>
+      <span class="vote-total" id="voteTotal">집계 중...</span>
+      <span class="stat-con">반대 <strong id="pctCon">50</strong>%</span>
     </div>
   </div>
 
@@ -69,23 +86,36 @@
     <div class="form-section">
 
       <div class="field">
+        <label>찬반 의견</label>
+        <div class="vote-choice" id="voteChoice">
+          <button type="button" class="choice-btn" data-value="찬성" onclick="selectVote(this)">
+            👍 찬성
+          </button>
+          <button type="button" class="choice-btn" data-value="반대" onclick="selectVote(this)">
+            👎 반대
+          </button>
+        </div>
+        <input type="hidden" name="vote" id="voteInput" />
+      </div>
+
+      <div class="field">
         <label>이름</label>
-        <input type="text" name="name" placeholder="본인의 이름을 입력하세요" autocomplete="off" />
+        <input type="text" name="name" placeholder="본인의 이름을 입력하세요" autocomplete="off" maxlength="20" />
       </div>
 
       <div class="field">
         <label>학번</label>
-        <input type="text" name="studentId" placeholder="학번을 입력하세요" autocomplete="off" />
+        <input type="text" name="studentId" placeholder="숫자 10자리 (예: 2024123456)" autocomplete="off" maxlength="10" inputmode="numeric" />
       </div>
 
       <div class="field">
         <label>핵심 주장</label>
-        <textarea name="claim" placeholder="논제에 대한 핵심 주장을 입력하세요"></textarea>
+        <textarea name="claim" placeholder="논제에 대한 핵심 주장을 입력하세요 (최대 500자)" maxlength="500"></textarea>
       </div>
 
       <div class="field">
         <label>근거</label>
-        <textarea name="evidence" class="tall" placeholder="주장을 뒷받침하는 근거를 입력하세요"></textarea>
+        <textarea name="evidence" class="tall" placeholder="주장을 뒷받침하는 근거를 입력하세요 (최대 1000자)" maxlength="1000"></textarea>
       </div>
 
     </div>
@@ -100,6 +130,19 @@
     생각은 말할 때 완성됩니다 &nbsp;·&nbsp; @soldebate_knu
   </div>
 
+</div>
+
+<div class="modal-overlay" id="invalidIdModal">
+  <div class="modal">
+    <div class="modal-header orange">⚠️ 학번 형식 오류</div>
+    <div class="modal-body">
+      학번은 <strong>숫자 10자리</strong>로 입력해주세요.<br>
+      예: 2024123456
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal('invalidIdModal')">확인</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="duplicateModal">
@@ -133,7 +176,7 @@
 
 <script>
 
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3ffDnGBoPY7WngEOoftbMfZh4z9OYD40HhWdhuclAPtwG2XHvLNv9JOZxBeUL8CNifA/exec"
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3ffDnGBoPY7WngEOoftbMfZh4z9OYD40HhWdhuclAPtwG2XHvLNv9JOZxBeUL8CNifA/exec";
 
   const topicText = document.getElementById('topicText').innerText.trim();
 
@@ -144,6 +187,7 @@
     const studentId = this.studentId.value.trim();
     const claim     = this.claim.value.trim();
     const evidence  = this.evidence.value.trim();
+    const vote      = document.getElementById('voteInput').value.trim();
 
     const fields = [
       { el: this.name,      val: name },
@@ -151,6 +195,13 @@
       { el: this.claim,     val: claim },
       { el: this.evidence,  val: evidence }
     ];
+    if (!vote) {
+      const vc = document.getElementById('voteChoice');
+      vc.classList.add('error-choice');
+      vc.style.animation = 'none';
+      requestAnimationFrame(() => { vc.style.animation = 'shake 0.35s ease'; });
+      hasEmpty = true;
+    }
     let hasEmpty = false;
     fields.forEach(({ el, val }) => {
       if (!val) {
@@ -164,11 +215,20 @@
     });
     if (hasEmpty) return;
 
+    if (!/^[0-9]{10}$/.test(studentId)) {
+      const el = document.getElementById('applyForm').studentId;
+      el.classList.add('error');
+      el.style.animation = 'none';
+      requestAnimationFrame(() => { el.style.animation = 'shake 0.35s ease'; });
+      openModal('invalidIdModal');
+      return;
+    }
+
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>제출 중...';
 
-    const payload = { topic: topicText, name, studentId, claim, evidence };
+    const payload = { topic: topicText, name, studentId, vote, claim, evidence };
 
     try {
       const res = await fetch(SCRIPT_URL, {
@@ -178,7 +238,10 @@
 
       const result = await res.json();
 
-      if (result.result === "duplicate") {
+      if (result.result === "limit") {
+        document.getElementById('errorMsg').textContent = "오늘 제출 가능한 최대 인원에 도달했습니다. 관리자에게 문의하세요.";
+        openModal('errorModal');
+      } else if (result.result === "duplicate") {
         openModal('duplicateModal');
       } else if (result.result === "success") {
         document.getElementById('successOverlay').classList.add('show');
@@ -208,6 +271,34 @@
       if (e.target === this) this.classList.remove('show');
     });
   });
+
+  function selectVote(btn) {
+    document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('voteInput').value = btn.dataset.value;
+    document.getElementById('voteChoice').classList.remove('error-choice');
+  }
+
+  async function fetchVotes() {
+    try {
+      const res = await fetch(SCRIPT_URL + "?action=votes");
+      const data = await res.json();
+      const pro   = data.pro   || 0;
+      const con   = data.con   || 0;
+      const total = pro + con;
+      const pPro  = total === 0 ? 50 : Math.round(pro / total * 100);
+      const pCon  = 100 - pPro;
+      document.getElementById('barPro').style.width  = pPro + '%';
+      document.getElementById('barCon').style.width  = pCon + '%';
+      document.getElementById('pctPro').textContent  = pPro;
+      document.getElementById('pctCon').textContent  = pCon;
+      document.getElementById('voteTotal').textContent = '총 ' + total + '명';
+    } catch (e) {}
+  }
+
+  fetchVotes();
+  setInterval(fetchVotes, 5000);
+
 </script>
 </body>
 </html>
