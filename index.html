@@ -22,7 +22,7 @@
 
   <div class="topic-box">
     <div class="topic-label">이번 회차 논제</div>
-    <div class="topic-text" id="topicText">학교폭력 가해학생에 대한 대학 입시 불이익을 의무화해야 한다.</div>
+    <div class="topic-text" id="topicText">학교폭력 가해학생에 대한 대학 입시 불이익을 의무화해야 한다</div>
   </div>
 
   <div class="quote-bottom">❞</div>
@@ -44,12 +44,10 @@
       <div class="topic-desc-text">
         이 논제는 학교폭력 문제가 단순한 교내 갈등을 넘어 사회적 책임의 문제로 확장되고 있는 배경에서 출발합니다.
         피해 학생 보호와 재발 방지라는 측면에서 강력한 제재가 필요하다는 주장과, 청소년에게 과도한 낙인이 될 수 있다는 우려가 동시에 존재합니다.
-        그렇기에 다양한 시각에서 비판적으로 검토할 필요가 있습니다.
-        여러분의 논리적인 주장을 기다립니다.
+        그렇기에 다양한 시각에서 비판적으로 검토할 필요가 있습니다. 여러분의 논리적인 주장을 기다립니다.
       </div>
     </div>
   </div>
-
 
   <div class="vote-section">
     <div class="vote-header">
@@ -67,16 +65,17 @@
     </div>
   </div>
 
-  <div class="welcome-box">
-    <div class="welcome-icon">📌</div>
-    <div class="welcome-content">
-      <div class="welcome-title">이런 분을 <span>환영</span>합니다</div>
-      <ul class="welcome-list">
-        <li>한마디라도 하고 싶은 분</li>
-        <li>논리적으로 의견을 나누고 싶은 분</li>
-        <li>비판적 사고에 관심 있는 분</li>
-        <li>토론 경험이 없어도 괜찮습니다</li>
-      </ul>
+  <div class="board-section">
+    <div class="board-header">
+      <span class="section-title" style="margin-bottom:0;">이런 주장들이 있어요</span>
+      <span class="board-count" id="boardCount"></span>
+    </div>
+    <div class="sort-wrap">
+      <button class="sort-btn active" onclick="setSort('latest', this)">최신순</button>
+      <button class="sort-btn" onclick="setSort('likes', this)">좋아요순</button>
+    </div>
+    <div class="board-list" id="boardList">
+      <div class="board-loading">불러오는 중...</div>
     </div>
   </div>
 
@@ -168,12 +167,6 @@
   </div>
 </div>
 
-<div class="success-overlay" id="successOverlay">
-  <div class="check">✓</div>
-  <h2>제출 완료!</h2>
-  <p>지원해주셔서 감사합니다.<br>우리가 틀렸음을 증명해주세요!</p>
-</div>
-
 <script>
 
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3ffDnGBoPY7WngEOoftbMfZh4z9OYD40HhWdhuclAPtwG2XHvLNv9JOZxBeUL8CNifA/exec";
@@ -189,12 +182,8 @@
     const evidence  = this.evidence.value.trim();
     const vote      = document.getElementById('voteInput').value.trim();
 
-    const fields = [
-      { el: this.name,      val: name },
-      { el: this.studentId, val: studentId },
-      { el: this.claim,     val: claim },
-      { el: this.evidence,  val: evidence }
-    ];
+    let hasEmpty = false;
+
     if (!vote) {
       const vc = document.getElementById('voteChoice');
       vc.classList.add('error-choice');
@@ -202,7 +191,13 @@
       requestAnimationFrame(() => { vc.style.animation = 'shake 0.35s ease'; });
       hasEmpty = true;
     }
-    let hasEmpty = false;
+
+    const fields = [
+      { el: this.name,      val: name },
+      { el: this.studentId, val: studentId },
+      { el: this.claim,     val: claim },
+      { el: this.evidence,  val: evidence }
+    ];
     fields.forEach(({ el, val }) => {
       if (!val) {
         el.classList.add('error');
@@ -244,8 +239,8 @@
       } else if (result.result === "duplicate") {
         openModal('duplicateModal');
       } else if (result.result === "success") {
-        document.getElementById('successOverlay').classList.add('show');
         this.reset();
+        window.location.href = "complete.html";
       } else {
         document.getElementById('errorMsg').textContent = "알 수 없는 오류가 발생했습니다.";
         openModal('errorModal');
@@ -298,6 +293,111 @@
 
   fetchVotes();
   setInterval(fetchVotes, 5000);
+
+  let currentSort = 'latest';
+  let cachedList  = [];
+
+  function setSort(type, btn) {
+    currentSort = type;
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBoard(cachedList);
+  }
+
+  function hashKey(str) {
+    let hash = 0;
+    for (let i = 0; i < Math.min(str.length, 40); i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return 'like_' + Math.abs(hash);
+  }
+
+  function isLiked(key) {
+    const liked = JSON.parse(localStorage.getItem('sol_likes') || '{}');
+    return !!liked[key];
+  }
+
+  function getLikeCount(key) {
+    const counts = JSON.parse(localStorage.getItem('sol_like_counts') || '{}');
+    return counts[key] || 0;
+  }
+
+  function toggleLike(key, btn) {
+    const liked  = JSON.parse(localStorage.getItem('sol_likes')       || '{}');
+    const counts = JSON.parse(localStorage.getItem('sol_like_counts') || '{}');
+
+    if (liked[key]) {
+      delete liked[key];
+      counts[key] = Math.max(0, (counts[key] || 1) - 1);
+      btn.classList.remove('liked');
+      btn.querySelector('.like-heart').textContent = '🤍';
+    } else {
+      liked[key]  = true;
+      counts[key] = (counts[key] || 0) + 1;
+      btn.classList.add('liked');
+      btn.querySelector('.like-heart').textContent = '❤️';
+      btn.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.4)' },
+        { transform: 'scale(1)' }
+      ], { duration: 300, easing: 'ease' });
+    }
+
+    localStorage.setItem('sol_likes',       JSON.stringify(liked));
+    localStorage.setItem('sol_like_counts', JSON.stringify(counts));
+    btn.querySelector('.like-count').textContent = counts[key] || 0;
+  }
+
+  function renderBoard(list) {
+    const container = document.getElementById('boardList');
+    if (list.length === 0) {
+      container.innerHTML = '<div class="board-empty">아직 선정된 주장이 없습니다.</div>';
+      return;
+    }
+
+    const sorted = [...list].map(item => ({
+      ...item,
+      key:   hashKey(item.claim),
+      likes: getLikeCount(hashKey(item.claim))
+    }));
+
+    if (currentSort === 'likes') {
+      sorted.sort((a, b) => b.likes - a.likes);
+    }
+
+    container.innerHTML = sorted.map(item => {
+      const liked = isLiked(item.key);
+      return `
+      <div class="board-card ${item.vote === '찬성' ? 'card-pro' : 'card-con'}">
+        <span class="card-badge ${item.vote === '찬성' ? 'badge-pro' : 'badge-con'}">${item.vote}</span>
+        <p class="card-claim">${escapeHtml(item.claim)}</p>
+        <button class="like-btn ${liked ? 'liked' : ''}" onclick="toggleLike('${item.key}', this)">
+          <span class="like-heart">${liked ? '❤️' : '🤍'}</span>
+          <span class="like-count">${item.likes}</span>
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  async function fetchFeatured() {
+    try {
+      const res = await fetch(SCRIPT_URL + "?action=featured");
+      const data = await res.json();
+      cachedList = data.featured || [];
+      document.getElementById('boardCount').textContent = cachedList.length + '개';
+      renderBoard(cachedList);
+    } catch(e) {
+      document.getElementById('boardList').innerHTML = '<div class="board-empty">불러오기 실패</div>';
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  fetchFeatured();
+  setInterval(fetchFeatured, 10000);
 
 </script>
 </body>

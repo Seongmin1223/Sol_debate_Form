@@ -157,7 +157,7 @@ body::after {
 .topic-image-wrap {
   position: relative;
   min-height: 200px;
-  max-height: 300px;
+  max-height: 240px;
   background: #ddd;
   overflow: hidden;
 }
@@ -553,7 +553,7 @@ textarea.tall {
     border-top: 2px solid var(--black);
   }
   .topic-image-wrap {
-    min-height: 200px;
+    min-height: 180px;
   }
   .quote-top, .quote-bottom { font-size: 80px; }
   .topic-text { font-size: 18px; }
@@ -562,6 +562,9 @@ textarea.tall {
 }
 
 
+/* =============================================
+   찬반 투표 현황
+============================================= */
 .vote-section {
   border: 2px solid var(--black);
   background: rgba(255,255,255,0.6);
@@ -653,6 +656,9 @@ textarea.tall {
   letter-spacing: 1px;
 }
 
+/* =============================================
+   찬반 선택 버튼
+============================================= */
 .vote-choice {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -695,4 +701,173 @@ textarea.tall {
 .vote-choice.error-choice .choice-btn {
   border-color: var(--red);
   background: rgba(215,43,43,0.06);
+}
+
+
+/* =============================================
+   주장 게시판
+============================================= */
+.board-section {
+  margin-top: 48px;
+  animation: fadeUp 0.6s ease 0.7s both;
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--black);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.board-count {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #888;
+}
+
+.board-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.board-loading,
+.board-empty {
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  letter-spacing: 2px;
+  padding: 32px 0;
+}
+
+.board-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: rgba(255,255,255,0.6);
+  border: 2px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.board-card:hover {
+  transform: translateX(4px);
+}
+
+.board-card.card-pro {
+  border-left: 5px solid var(--black);
+  border-color: rgba(0,0,0,0.08);
+  border-left-color: var(--black);
+}
+
+.board-card.card-con {
+  border-left: 5px solid var(--red);
+  border-color: rgba(0,0,0,0.08);
+  border-left-color: var(--red);
+}
+
+.card-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  margin-top: 2px;
+}
+
+.badge-pro {
+  background: var(--black);
+  color: #fff;
+}
+
+.badge-con {
+  background: var(--red);
+  color: #fff;
+}
+
+.card-claim {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #222;
+  word-break: keep-all;
+}
+
+
+/* =============================================
+   좋아요 버튼
+============================================= */
+.board-card {
+  position: relative;
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  margin-left: auto;
+  background: none;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  color: #888;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.like-btn:hover {
+  border-color: #e05555;
+  color: #e05555;
+  background: rgba(224, 85, 85, 0.05);
+}
+
+.like-btn.liked {
+  border-color: #e05555;
+  color: #e05555;
+  background: rgba(224, 85, 85, 0.07);
+}
+
+.like-heart {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.like-count {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  min-width: 12px;
+}
+
+.sort-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sort-btn {
+  background: transparent;
+  border: 1.5px solid rgba(0,0,0,0.2);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 5px 14px;
+  cursor: pointer;
+  color: #888;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.sort-btn:hover {
+  border-color: var(--black);
+  color: var(--black);
+}
+
+.sort-btn.active {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
 }
