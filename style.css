@@ -157,7 +157,7 @@ body::after {
 .topic-image-wrap {
   position: relative;
   min-height: 200px;
-  max-height: 240px;
+  max-height: 300px;
   background: #ddd;
   overflow: hidden;
 }
@@ -561,10 +561,6 @@ textarea.tall {
   .club-banner { font-size: 10px; letter-spacing: 3px; }
 }
 
-
-/* =============================================
-   찬반 투표 현황
-============================================= */
 .vote-section {
   border: 2px solid var(--black);
   background: rgba(255,255,255,0.6);
@@ -656,9 +652,6 @@ textarea.tall {
   letter-spacing: 1px;
 }
 
-/* =============================================
-   찬반 선택 버튼
-============================================= */
 .vote-choice {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -703,10 +696,6 @@ textarea.tall {
   background: rgba(215,43,43,0.06);
 }
 
-
-/* =============================================
-   주장 게시판
-============================================= */
 .board-section {
   margin-top: 48px;
   animation: fadeUp 0.6s ease 0.7s both;
@@ -751,6 +740,24 @@ textarea.tall {
   background: rgba(255,255,255,0.6);
   border: 2px solid transparent;
   transition: transform 0.15s, box-shadow 0.15s;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.board-card::-webkit-scrollbar {
+  width: 3px;
+}
+
+.board-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.board-card::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+}
+
+.board-card::-webkit-scrollbar-thumb:hover {
+  background: var(--red);
 }
 
 .board-card:hover {
@@ -793,12 +800,29 @@ textarea.tall {
   line-height: 1.75;
   color: #222;
   word-break: keep-all;
+  flex: 1;
+  min-width: 0;
+  max-height: 76px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
+.card-claim::-webkit-scrollbar {
+  width: 3px;
+}
 
-/* =============================================
-   좋아요 버튼
-============================================= */
+.card-claim::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-claim::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+}
+
+.card-claim::-webkit-scrollbar-thumb:hover {
+  background: var(--red);
+}
+
 .board-card {
   position: relative;
 }
@@ -870,4 +894,53 @@ textarea.tall {
   background: var(--black);
   border-color: var(--black);
   color: #fff;
+}
+
+.label-sub {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #999;
+  text-transform: none;
+}
+
+.char-wrap {
+  position: relative;
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 1px;
+  margin-top: 5px;
+  transition: color 0.2s;
+}
+
+.char-count.near-limit {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.recruit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #fff;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 11px 20px;
+  text-decoration: none;
+  margin-bottom: 32px;
+  transition: background 0.15s, transform 0.15s;
+  animation: fadeDown 0.4s ease 0.05s both;
+}
+
+.recruit-banner:hover {
+  background: #b81e1e;
+  transform: translateY(-1px);
 }
